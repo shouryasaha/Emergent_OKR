@@ -551,8 +551,10 @@ const App = () => {
     const [progressValue, setProgressValue] = useState('');
 
     const handleCreateKeyResult = async (objectiveId, keyResultData) => {
-      await createKeyResult(objectiveId, keyResultData);
-      setShowKeyResultForm(false);
+      const result = await createKeyResult(objectiveId, keyResultData);
+      if (result) {
+        setShowKeyResultForm(false);
+      }
     };
 
     const handleCreateInitiative = async (keyResultId, initiativeData) => {
