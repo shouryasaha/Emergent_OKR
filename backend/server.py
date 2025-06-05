@@ -41,7 +41,7 @@ class Initiative(BaseModel):
     description: Optional[str] = ""
     owner: Optional[str] = ""
     status: str = "not_started"  # not_started, in_progress, completed
-    key_result_id: str
+    key_result_id: Optional[str] = None  # Will be set by the API
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 
