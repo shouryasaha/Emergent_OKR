@@ -126,6 +126,14 @@ const App = () => {
         },
         body: JSON.stringify(initiativeData),
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error creating initiative:', errorData);
+        alert('Failed to create initiative. Please check the form data.');
+        return null;
+      }
+      
       const newInitiative = await response.json();
       if (selectedObjective) {
         await fetchObjectiveDetails(selectedObjective.id);
@@ -133,6 +141,8 @@ const App = () => {
       return newInitiative;
     } catch (error) {
       console.error('Error creating initiative:', error);
+      alert('Network error while creating initiative.');
+      return null;
     }
   };
 
