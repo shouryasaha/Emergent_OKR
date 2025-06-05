@@ -160,8 +160,17 @@ async def get_objective(objective_id: str):
 async def update_objective(objective_id: str, objective: Objective):
     obj_dict = objective.dict()
     obj_dict['updated_at'] = datetime.now()
-    if obj_dict['deadline']:
-        obj_dict['deadline'] = obj_dict['deadline'].isoformat()
+    # Handle date serialization
+    if obj_dict.get('deadline'):
+        if isinstance(obj_dict['deadline'], str):
+            try:
+                # Parse string date to datetime object
+                obj_dict['deadline'] = datetime.fromisoformat(obj_dict['deadline']).date().isoformat()
+            except ValueError:
+                # If already a proper date string, keep it
+                pass
+        elif hasattr(obj_dict['deadline'], 'isoformat'):
+            obj_dict['deadline'] = obj_dict['deadline'].isoformat()
     
     result = objectives_collection.update_one(
         {"id": objective_id}, 
