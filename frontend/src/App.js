@@ -49,11 +49,21 @@ const App = () => {
         },
         body: JSON.stringify(objectiveData),
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error creating objective:', errorData);
+        alert('Failed to create objective. Please check the form data.');
+        return null;
+      }
+      
       const newObjective = await response.json();
       await fetchDashboard();
       return newObjective;
     } catch (error) {
       console.error('Error creating objective:', error);
+      alert('Network error while creating objective.');
+      return null;
     }
   };
 
