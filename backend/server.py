@@ -115,8 +115,17 @@ async def get_objectives():
 @app.post("/api/objectives")
 async def create_objective(objective: Objective):
     obj_dict = objective.dict()
-    if obj_dict['deadline']:
-        obj_dict['deadline'] = obj_dict['deadline'].isoformat()
+    # Handle date serialization
+    if obj_dict.get('deadline'):
+        if isinstance(obj_dict['deadline'], str):
+            try:
+                # Parse string date to datetime object
+                obj_dict['deadline'] = datetime.fromisoformat(obj_dict['deadline']).date().isoformat()
+            except ValueError:
+                # If already a proper date string, keep it
+                pass
+        elif hasattr(obj_dict['deadline'], 'isoformat'):
+            obj_dict['deadline'] = obj_dict['deadline'].isoformat()
     
     result = objectives_collection.insert_one(obj_dict)
     obj_dict['_id'] = str(result.inserted_id)
