@@ -55,7 +55,7 @@ class KeyResult(BaseModel):
     current_value: Optional[float] = 0
     unit: Optional[str] = ""
     owner: Optional[str] = ""
-    objective_id: str
+    objective_id: Optional[str] = None  # Will be set by the API
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 
