@@ -77,11 +77,21 @@ const App = () => {
         },
         body: JSON.stringify(keyResultData),
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error creating key result:', errorData);
+        alert('Failed to create key result. Please check the form data.');
+        return null;
+      }
+      
       const newKeyResult = await response.json();
       await fetchObjectiveDetails(objectiveId);
       return newKeyResult;
     } catch (error) {
       console.error('Error creating key result:', error);
+      alert('Network error while creating key result.');
+      return null;
     }
   };
 
