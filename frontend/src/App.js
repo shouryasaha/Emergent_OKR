@@ -433,8 +433,10 @@ const App = () => {
     const [showObjectiveForm, setShowObjectiveForm] = useState(false);
 
     const handleCreateObjective = async (objectiveData) => {
-      await createObjective(objectiveData);
-      setShowObjectiveForm(false);
+      const result = await createObjective(objectiveData);
+      if (result) {
+        setShowObjectiveForm(false);
+      }
     };
 
     if (loading && !dashboardData) {
