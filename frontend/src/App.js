@@ -558,8 +558,10 @@ const App = () => {
     };
 
     const handleCreateInitiative = async (keyResultId, initiativeData) => {
-      await createInitiative(keyResultId, initiativeData);
-      setShowInitiativeForm(null);
+      const result = await createInitiative(keyResultId, initiativeData);
+      if (result) {
+        setShowInitiativeForm(null);
+      }
     };
 
     const handleProgressUpdate = async (keyResultId) => {
