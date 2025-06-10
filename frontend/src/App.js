@@ -393,79 +393,6 @@ const App = () => {
     );
   };
 
-  const EditInitiativeForm = ({ initiative, onSubmit, onCancel }) => {
-    const [formData, setFormData] = useState({
-      title: initiative.title,
-      description: initiative.description || '',
-      owner: initiative.owner || '',
-      status: initiative.status
-    });
-
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      onSubmit(initiative.id, formData);
-    };
-
-    return (
-      <div className="bg-blue-50 p-4 rounded-lg border mt-3">
-        <h4 className="text-md font-medium text-gray-900 mb-3">Edit Initiative</h4>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div>
-            <input
-              type="text"
-              required
-              value={formData.title}
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Initiative title..."
-            />
-          </div>
-          <div>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows="2"
-              placeholder="Description..."
-            ></textarea>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <input
-              type="text"
-              value={formData.owner}
-              onChange={(e) => setFormData({...formData, owner: e.target.value})}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Owner..."
-            />
-            <select
-              value={formData.status}
-              onChange={(e) => setFormData({...formData, status: e.target.value})}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="not_started">Not Started</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
-            </select>
-          </div>
-          <div className="flex gap-2">
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
-            >
-              Update
-            </button>
-            <button
-              type="button"
-              onClick={onCancel}
-              className="bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-400 transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-    );
-  };
   const InitiativeForm = ({ keyResultId, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
       title: '',
@@ -914,25 +841,41 @@ const App = () => {
 
                 <div className="space-y-2">
                   {keyResult.initiatives?.map((initiative) => (
-                    <div key={initiative.id} className="flex items-center justify-between p-3 bg-gray-50 rounded border">
-                      <div className="flex-1">
-                        <h5 className="font-medium text-gray-900">{initiative.title}</h5>
-                        {initiative.description && (
-                          <p className="text-sm text-gray-600">{initiative.description}</p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-3">
-                        {initiative.owner && (
-                          <span className="text-sm text-gray-500">{initiative.owner}</span>
-                        )}
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${
-                          initiative.status === 'completed' ? 'bg-green-100 text-green-700' :
-                          initiative.status === 'in_progress' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-gray-100 text-gray-700'
-                        }`}>
-                          {initiative.status.replace('_', ' ')}
-                        </span>
-                      </div>
+                    <div key={initiative.id}>
+                      {editingInitiative === initiative.id ? (
+                        <EditInitiativeForm
+                          initiative={initiative}
+                          onSubmit={handleUpdateInitiative}
+                          onCancel={() => setEditingInitiative(null)}
+                        />
+                      ) : (
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded border">
+                          <div className="flex-1">
+                            <h5 className="font-medium text-gray-900">{initiative.title}</h5>
+                            {initiative.description && (
+                              <p className="text-sm text-gray-600">{initiative.description}</p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-3">
+                            {initiative.owner && (
+                              <span className="text-sm text-gray-500">{initiative.owner}</span>
+                            )}
+                            <span className={`px-2 py-1 rounded text-xs font-medium ${
+                              initiative.status === 'completed' ? 'bg-green-100 text-green-700' :
+                              initiative.status === 'in_progress' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-gray-100 text-gray-700'
+                            }`}>
+                              {initiative.status.replace('_', ' ')}
+                            </span>
+                            <button
+                              onClick={() => startEditingInitiative(initiative)}
+                              className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs hover:bg-blue-200 transition-colors"
+                            >
+                              Edit
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
