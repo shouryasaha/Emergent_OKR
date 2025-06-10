@@ -578,6 +578,7 @@ const App = () => {
     const [showKeyResultForm, setShowKeyResultForm] = useState(false);
     const [showInitiativeForm, setShowInitiativeForm] = useState(null);
     const [editingProgress, setEditingProgress] = useState(null);
+    const [editingInitiative, setEditingInitiative] = useState(null);
     const [progressValue, setProgressValue] = useState('');
 
     const handleCreateKeyResult = async (objectiveId, keyResultData) => {
@@ -594,6 +595,13 @@ const App = () => {
       }
     };
 
+    const handleUpdateInitiative = async (initiativeId, initiativeData) => {
+      const result = await updateInitiative(initiativeId, initiativeData);
+      if (result) {
+        setEditingInitiative(null);
+      }
+    };
+
     const handleProgressUpdate = async (keyResultId) => {
       await updateKeyResultProgress(keyResultId, parseFloat(progressValue));
       setEditingProgress(null);
@@ -603,6 +611,10 @@ const App = () => {
     const startEditingProgress = (keyResult) => {
       setEditingProgress(keyResult.id);
       setProgressValue(keyResult.current_value.toString());
+    };
+
+    const startEditingInitiative = (initiative) => {
+      setEditingInitiative(initiative.id);
     };
 
     if (!selectedObjective) {
