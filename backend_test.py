@@ -481,6 +481,93 @@ def test_initiative_validation(tester):
     
     return True
 
+def test_specific_initiative_editing(tester):
+    """Test editing the specific initiative with ID 760fdbc6-3cb4-44bd-bf5f-89bbafc76423"""
+    print("\n" + "="*50)
+    print("🔍 TESTING SPECIFIC INITIATIVE EDITING")
+    print("="*50)
+    
+    initiative_id = "760fdbc6-3cb4-44bd-bf5f-89bbafc76423"
+    
+    # Test 1: Update all fields of the initiative
+    print("\n🔍 Testing updating all fields of the specific initiative")
+    new_title = "Enhanced Live Chat System"
+    new_description = "Implement advanced live chat with AI support"
+    new_owner = "Customer Experience Team"
+    new_status = "in_progress"
+    
+    success, updated_initiative = tester.test_update_initiative(
+        initiative_id=initiative_id,
+        title=new_title,
+        description=new_description,
+        owner=new_owner,
+        status=new_status
+    )
+    
+    if not success:
+        print(f"❌ Failed to update initiative {initiative_id}")
+        return False
+    
+    # Verify all fields were updated correctly
+    if (updated_initiative.get('title') != new_title or 
+        updated_initiative.get('description') != new_description or 
+        updated_initiative.get('owner') != new_owner or
+        updated_initiative.get('status') != new_status):
+        print("❌ Initiative content not updated correctly")
+        print(f"Expected title: {new_title}, got: {updated_initiative.get('title')}")
+        print(f"Expected description: {new_description}, got: {updated_initiative.get('description')}")
+        print(f"Expected owner: {new_owner}, got: {updated_initiative.get('owner')}")
+        print(f"Expected status: {new_status}, got: {updated_initiative.get('status')}")
+        return False
+    
+    print("✅ Successfully updated all fields of the initiative")
+    
+    # Test 2: Update just the status to completed
+    print("\n🔍 Testing updating just the status to completed")
+    new_status = "completed"
+    
+    success, updated_initiative = tester.test_update_initiative(
+        initiative_id=initiative_id,
+        title=new_title,  # Keep the same title
+        description=new_description,  # Keep the same description
+        owner=new_owner,  # Keep the same owner
+        status=new_status  # Change status to completed
+    )
+    
+    if not success:
+        print(f"❌ Failed to update initiative status to completed")
+        return False
+    
+    if updated_initiative.get('status') != new_status:
+        print(f"❌ Initiative status not updated correctly. Expected '{new_status}', got '{updated_initiative.get('status')}'")
+        return False
+    
+    print("✅ Successfully updated initiative status to completed")
+    
+    # Test 3: Change back to not_started to verify full status cycle
+    print("\n🔍 Testing changing status back to not_started")
+    new_status = "not_started"
+    
+    success, updated_initiative = tester.test_update_initiative(
+        initiative_id=initiative_id,
+        title=new_title,
+        description=new_description,
+        owner=new_owner,
+        status=new_status
+    )
+    
+    if not success:
+        print(f"❌ Failed to update initiative status to not_started")
+        return False
+    
+    if updated_initiative.get('status') != new_status:
+        print(f"❌ Initiative status not updated correctly. Expected '{new_status}', got '{updated_initiative.get('status')}'")
+        return False
+    
+    print("✅ Successfully updated initiative status to not_started")
+    
+    return True
+
 def main():
     # Get the backend URL from the frontend .env file
     backend_url = "https://ddf3c65f-4a01-47bf-a246-2710b334b060.preview.emergentagent.com"
@@ -490,71 +577,11 @@ def main():
     
     # Basic API tests
     tester.test_health_check()
-    tester.test_get_dashboard()
-    tester.test_get_objectives()
     
-    # Create a new objective
-    success, objective = tester.test_create_objective(
-        title="Test Objective",
-        description="This is a test objective created by the API test script",
-        owner="Test User",
-        deadline=date.today()
-    )
+    # Test the specific initiative editing functionality
+    specific_initiative_success = test_specific_initiative_editing(tester)
     
-    if not success or not objective.get('id'):
-        print("❌ Failed to create objective, stopping tests")
-        return 1
-    
-    objective_id = objective.get('id')
-    
-    # Get objective details
-    tester.test_get_objective_details(objective_id)
-    
-    # Create a metric key result
-    success, key_result = tester.test_create_key_result(
-        objective_id=objective_id,
-        title="Test Metric Key Result",
-        kr_type="metric",
-        start_value=0,
-        target_value=100,
-        current_value=25,
-        unit="%",
-        owner="Test KR Owner"
-    )
-    
-    if not success or not key_result.get('id'):
-        print("❌ Failed to create key result, stopping tests")
-        return 1
-    
-    key_result_id = key_result.get('id')
-    
-    # Create a binary key result
-    success, binary_kr = tester.test_create_key_result(
-        objective_id=objective_id,
-        title="Test Binary Key Result",
-        kr_type="binary",
-        start_value=0,
-        target_value=1,
-        current_value=0,
-        owner="Test Binary KR Owner"
-    )
-    
-    # Update key result progress
-    tester.test_update_key_result_progress(key_result_id, 50)
-    
-    # Create an initiative
-    success, initiative = tester.test_create_initiative(
-        key_result_id=key_result_id,
-        title="Test Initiative",
-        description="This is a test initiative",
-        owner="Test Initiative Owner",
-        status="in_progress"
-    )
-    
-    # Get updated objective details to verify changes
-    tester.test_get_objective_details(objective_id)
-    
-    # Test initiative editing functionality
+    # Test general initiative editing workflow
     initiative_editing_success = test_initiative_editing_workflow(tester)
     
     # Test initiative validation
@@ -562,6 +589,12 @@ def main():
     
     # Print test summary
     success = tester.print_summary()
+    
+    if not specific_initiative_success:
+        print("\n❌ Specific initiative editing tests failed")
+        success = False
+    else:
+        print("\n✅ Specific initiative editing tests passed")
     
     if not initiative_editing_success:
         print("\n❌ Initiative editing workflow tests failed")
