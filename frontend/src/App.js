@@ -146,6 +146,36 @@ const App = () => {
     }
   };
 
+  // Update initiative
+  const updateInitiative = async (initiativeId, initiativeData) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/initiatives/${initiativeId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(initiativeData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error updating initiative:', errorData);
+        alert('Failed to update initiative. Please check the form data.');
+        return null;
+      }
+      
+      const updatedInitiative = await response.json();
+      if (selectedObjective) {
+        await fetchObjectiveDetails(selectedObjective.id);
+      }
+      return updatedInitiative;
+    } catch (error) {
+      console.error('Error updating initiative:', error);
+      alert('Network error while updating initiative.');
+      return null;
+    }
+  };
+
   useEffect(() => {
     fetchDashboard();
   }, []);
