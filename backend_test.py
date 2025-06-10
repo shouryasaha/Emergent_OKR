@@ -193,6 +193,29 @@ class OKRAPITester:
             print(f"Created initiative with ID: {response.get('id')}")
         
         return success, response
+        
+    def test_update_initiative(self, initiative_id, title, description="", owner="", status="not_started"):
+        """Test updating an initiative"""
+        data = {
+            "id": initiative_id,
+            "title": title,
+            "description": description,
+            "owner": owner,
+            "status": status
+        }
+        
+        success, response = self.run_test(
+            f"Update Initiative: {title}",
+            "PUT",
+            f"api/initiatives/{initiative_id}",
+            200,
+            data=data
+        )
+        
+        if success:
+            print(f"Updated initiative: {response.get('title')} with status: {response.get('status')}")
+        
+        return success, response
 
     def print_summary(self):
         """Print a summary of the test results"""
