@@ -276,15 +276,20 @@ async def create_initiative(key_result_id: str, initiative: Initiative):
 
 @app.put("/api/initiatives/{initiative_id}")
 async def update_initiative(initiative_id: str, initiative: Initiative):
+    # First check if the initiative exists
+    existing_init = initiatives_collection.find_one({"id": initiative_id})
+    if not existing_init:
+        raise HTTPException(status_code=404, detail="Initiative not found")
+    
     init_dict = initiative.dict()
     init_dict['updated_at'] = datetime.now()
+    # Ensure we preserve the original id
+    init_dict['id'] = initiative_id
     
     result = initiatives_collection.update_one(
         {"id": initiative_id}, 
         {"$set": init_dict}
     )
-    if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Initiative not found")
     
     updated_init = initiatives_collection.find_one({"id": initiative_id})
     if not updated_init:
