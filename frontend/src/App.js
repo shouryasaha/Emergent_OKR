@@ -393,7 +393,79 @@ const App = () => {
     );
   };
 
-  const InitiativeForm = ({ keyResultId, onSubmit, onCancel }) => {
+  const EditInitiativeForm = ({ initiative, onSubmit, onCancel }) => {
+    const [formData, setFormData] = useState({
+      title: initiative.title,
+      description: initiative.description || '',
+      owner: initiative.owner || '',
+      status: initiative.status
+    });
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      onSubmit(initiative.id, formData);
+    };
+
+    return (
+      <div className="bg-blue-50 p-4 rounded-lg border mt-3">
+        <h4 className="text-md font-medium text-gray-900 mb-3">Edit Initiative</h4>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div>
+            <input
+              type="text"
+              required
+              value={formData.title}
+              onChange={(e) => setFormData({...formData, title: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Initiative title..."
+            />
+          </div>
+          <div>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows="2"
+              placeholder="Description..."
+            ></textarea>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <input
+              type="text"
+              value={formData.owner}
+              onChange={(e) => setFormData({...formData, owner: e.target.value})}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Owner..."
+            />
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({...formData, status: e.target.value})}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="not_started">Not Started</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
+            >
+              Update
+            </button>
+            <button
+              type="button"
+              onClick={onCancel}
+              className="bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-400 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  };
     const [formData, setFormData] = useState({
       title: '',
       description: '',
