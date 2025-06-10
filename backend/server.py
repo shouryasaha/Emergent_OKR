@@ -287,6 +287,9 @@ async def update_initiative(initiative_id: str, initiative: Initiative):
         raise HTTPException(status_code=404, detail="Initiative not found")
     
     updated_init = initiatives_collection.find_one({"id": initiative_id})
+    if not updated_init:
+        raise HTTPException(status_code=500, detail="Failed to retrieve updated initiative")
+    
     updated_init['_id'] = str(updated_init['_id'])
     return updated_init
 
