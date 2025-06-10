@@ -473,7 +473,8 @@ const App = () => {
       title: initiative.title,
       description: initiative.description || '',
       owner: initiative.owner || '',
-      status: initiative.status
+      status: initiative.status,
+      key_result_id: initiative.key_result_id
     });
 
     const handleSubmit = (e) => {
