@@ -570,7 +570,7 @@ def test_specific_initiative_editing(tester):
 
 def main():
     # Get the backend URL from the frontend .env file
-    backend_url = "https://ddf3c65f-4a01-47bf-a246-2710b334b060.preview.emergentagent.com"
+    backend_url = "https://5a4e4720-a7e6-4c1d-8abc-236aacbc31c1.preview.emergentagent.com"
     
     print(f"Testing OKR API at: {backend_url}")
     tester = OKRAPITester(backend_url)
