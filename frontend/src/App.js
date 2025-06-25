@@ -394,8 +394,6 @@ const App = () => {
   };
 
   const KeyResultForm = ({ objectiveId, onSubmit, onCancel }) => {
-    console.log('KeyResultForm rendered with objectiveId:', objectiveId);
-    
     const [formData, setFormData] = useState({
       title: '',
       description: '',
@@ -409,7 +407,6 @@ const App = () => {
 
     const handleSubmit = (e) => {
       e.preventDefault();
-      console.log('KeyResultForm submitted with data:', formData);
       onSubmit(objectiveId, formData);
       setFormData({
         title: '',
@@ -426,9 +423,6 @@ const App = () => {
     return (
       <div className="bg-white p-6 rounded-lg border border-gray-200 mt-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Key Result</h3>
-        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded">
-          <p className="text-green-800 text-sm">Key Result Form is visible! Objective ID: {objectiveId}</p>
-        </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
@@ -512,10 +506,7 @@ const App = () => {
             </button>
             <button
               type="button"
-              onClick={() => {
-                console.log('Cancel button clicked');
-                onCancel();
-              }}
+              onClick={onCancel}
               className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
             >
               Cancel
