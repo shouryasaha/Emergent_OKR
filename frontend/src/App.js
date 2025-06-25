@@ -913,6 +913,7 @@ const App = () => {
                     <span className="text-sm font-medium text-gray-900">{objective.progress.toFixed(0)}%</span>
                     <button
                       onClick={() => {
+                        console.log('View Details clicked for objective:', objective.id, objective.title);
                         fetchObjectiveDetails(objective.id);
                         setActiveView('details');
                       }}
