@@ -982,6 +982,10 @@ const App = () => {
       );
     }
 
+    console.log('Selected Objective:', selectedObjective);
+    console.log('Key Results:', selectedObjective.key_results);
+    console.log('Number of Key Results:', selectedObjective.key_results?.length || 0);
+
     return (
       <div className="space-y-6">
         <div className="flex items-center space-x-4 mb-6">
@@ -1007,6 +1011,7 @@ const App = () => {
               <div className="flex items-center space-x-4 text-sm text-gray-500">
                 {selectedObjective.owner && <span>Owner: {selectedObjective.owner}</span>}
                 {selectedObjective.deadline && <span>Due: {new Date(selectedObjective.deadline).toLocaleDateString()}</span>}
+                <span>Key Results: {selectedObjective.key_results?.length || 0}</span>
               </div>
             </div>
             <div className="text-right">
@@ -1018,11 +1023,32 @@ const App = () => {
           </div>
           
           <button
-            onClick={() => setShowKeyResultForm(true)}
+            onClick={() => {
+              console.log('Add Key Result button clicked');
+              setShowKeyResultForm(true);
+            }}
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
           >
             + Add Key Result
           </button>
+          
+          {showKeyResultForm && (
+            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
+              <p className="text-yellow-800">Key Result form should appear here</p>
+            </div>
+          )}
+        </div>
+
+        {/* Debug Information */}
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <h3 className="font-semibold text-yellow-800 mb-2">Debug Information:</h3>
+          <div className="text-sm text-yellow-700">
+            <p>Show Key Result Form: {showKeyResultForm ? 'true' : 'false'}</p>
+            <p>Objective ID: {selectedObjective.id}</p>
+            <p>Key Results Array: {selectedObjective.key_results ? 'exists' : 'null/undefined'}</p>
+            <p>Key Results Length: {selectedObjective.key_results?.length || 0}</p>
+            <p>Progress: {selectedObjective.progress}%</p>
+          </div>
         </div>
 
         {/* Key Result Form */}
@@ -1030,155 +1056,162 @@ const App = () => {
           <KeyResultForm
             objectiveId={selectedObjective.id}
             onSubmit={handleCreateKeyResult}
-            onCancel={() => setShowKeyResultForm(false)}
+            onCancel={() => {
+              console.log('Canceling key result form');
+              setShowKeyResultForm(false);
+            }}
           />
         )}
 
-        {/* Key Results */}
+        {/* Key Results Display */}
         <div className="space-y-4">
-          {selectedObjective.key_results?.map((keyResult) => (
-            <div key={keyResult.id} className="bg-white rounded-lg border border-gray-200 p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{keyResult.title}</h3>
-                  {keyResult.description && (
-                    <p className="text-gray-600 mb-3">{keyResult.description}</p>
-                  )}
-                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                    {keyResult.owner && <span>Owner: {keyResult.owner}</span>}
-                    <span>Type: {keyResult.type === 'metric' ? 'Metric' : 'Binary'}</span>
-                    {keyResult.type === 'metric' && (
-                      <span>
-                        {keyResult.current_value} / {keyResult.target_value} {keyResult.unit}
-                      </span>
+          <h2 className="text-xl font-bold text-gray-900">
+            Key Results ({selectedObjective.key_results?.length || 0})
+          </h2>
+          
+          {selectedObjective.key_results && selectedObjective.key_results.length > 0 ? (
+            selectedObjective.key_results.map((keyResult) => (
+              <div key={keyResult.id} className="bg-white rounded-lg border border-gray-200 p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{keyResult.title}</h3>
+                    {keyResult.description && (
+                      <p className="text-gray-600 mb-3">{keyResult.description}</p>
                     )}
-                  </div>
-                  
-                  {/* Progress Update */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="flex-1">
-                      <ProgressBar progress={keyResult.progress} />
-                    </div>
-                    <span className="text-lg font-semibold text-gray-900">
-                      {keyResult.progress.toFixed(0)}%
-                    </span>
-                    {editingProgress === keyResult.id ? (
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          value={progressValue}
-                          onChange={(e) => setProgressValue(e.target.value)}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                          step="0.1"
-                        />
-                        <button
-                          onClick={() => handleProgressUpdate(keyResult.id)}
-                          className="bg-blue-600 text-white px-2 py-1 rounded text-sm hover:bg-blue-700"
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={() => setEditingProgress(null)}
-                          className="bg-gray-300 text-gray-700 px-2 py-1 rounded text-sm hover:bg-gray-400"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => startEditingProgress(keyResult)}
-                        className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm hover:bg-blue-200 transition-colors"
-                      >
-                        Update
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Initiatives */}
-              <div className="border-t pt-4">
-                <div className="flex justify-between items-center mb-3">
-                  <h4 className="text-md font-medium text-gray-900">
-                    Initiatives ({keyResult.initiatives?.length || 0})
-                  </h4>
-                  <button
-                    onClick={() => setShowInitiativeForm(keyResult.id)}
-                    className="bg-purple-100 text-purple-700 px-3 py-1 rounded text-sm hover:bg-purple-200 transition-colors"
-                  >
-                    + Add Initiative
-                  </button>
-                </div>
-
-                {showInitiativeForm === keyResult.id && (
-                  <InitiativeForm
-                    keyResultId={keyResult.id}
-                    onSubmit={handleCreateInitiative}
-                    onCancel={() => setShowInitiativeForm(null)}
-                  />
-                )}
-
-                <div className="space-y-2">
-                  {keyResult.initiatives?.map((initiative) => (
-                    <div key={initiative.id}>
-                      {editingInitiative === initiative.id ? (
-                        <EditInitiativeForm
-                          initiative={initiative}
-                          onSubmit={handleUpdateInitiative}
-                          onCancel={() => setEditingInitiative(null)}
-                        />
-                      ) : (
-                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded border">
-                          <div className="flex-1">
-                            <h5 className="font-medium text-gray-900">{initiative.title}</h5>
-                            {initiative.description && (
-                              <p className="text-sm text-gray-600">{initiative.description}</p>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-3">
-                            {initiative.owner && (
-                              <span className="text-sm text-gray-500">{initiative.owner}</span>
-                            )}
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${
-                              initiative.status === 'completed' ? 'bg-green-100 text-green-700' :
-                              initiative.status === 'in_progress' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-gray-100 text-gray-700'
-                            }`}>
-                              {initiative.status.replace('_', ' ')}
-                            </span>
-                            <button
-                              onClick={() => startEditingInitiative(initiative)}
-                              className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs hover:bg-blue-200 transition-colors"
-                            >
-                              Edit
-                            </button>
-                          </div>
-                        </div>
+                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                      {keyResult.owner && <span>Owner: {keyResult.owner}</span>}
+                      <span>Type: {keyResult.type === 'metric' ? 'Metric' : 'Binary'}</span>
+                      {keyResult.type === 'metric' && (
+                        <span>
+                          {keyResult.current_value} / {keyResult.target_value} {keyResult.unit}
+                        </span>
                       )}
                     </div>
-                  ))}
+                    
+                    {/* Progress Update */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-1">
+                        <ProgressBar progress={keyResult.progress} />
+                      </div>
+                      <span className="text-lg font-semibold text-gray-900">
+                        {keyResult.progress.toFixed(0)}%
+                      </span>
+                      {editingProgress === keyResult.id ? (
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="number"
+                            value={progressValue}
+                            onChange={(e) => setProgressValue(e.target.value)}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                            step="0.1"
+                          />
+                          <button
+                            onClick={() => handleProgressUpdate(keyResult.id)}
+                            className="bg-blue-600 text-white px-2 py-1 rounded text-sm hover:bg-blue-700"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => setEditingProgress(null)}
+                            className="bg-gray-300 text-gray-700 px-2 py-1 rounded text-sm hover:bg-gray-400"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => startEditingProgress(keyResult)}
+                          className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm hover:bg-blue-200 transition-colors"
+                        >
+                          Update
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
-                {(!keyResult.initiatives || keyResult.initiatives.length === 0) && (
-                  <p className="text-gray-500 text-sm">No initiatives yet. Add one to break down this key result into actionable steps.</p>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+                {/* Initiatives */}
+                <div className="border-t pt-4">
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="text-md font-medium text-gray-900">
+                      Initiatives ({keyResult.initiatives?.length || 0})
+                    </h4>
+                    <button
+                      onClick={() => setShowInitiativeForm(keyResult.id)}
+                      className="bg-purple-100 text-purple-700 px-3 py-1 rounded text-sm hover:bg-purple-200 transition-colors"
+                    >
+                      + Add Initiative
+                    </button>
+                  </div>
 
-        {(!selectedObjective.key_results || selectedObjective.key_results.length === 0) && (
-          <div className="text-center py-8 bg-white rounded-lg border border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Key Results Yet</h3>
-            <p className="text-gray-600 mb-4">Add key results to make this objective measurable.</p>
-            <button
-              onClick={() => setShowKeyResultForm(true)}
-              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
-            >
-              Add Your First Key Result
-            </button>
-          </div>
-        )}
+                  {showInitiativeForm === keyResult.id && (
+                    <InitiativeForm
+                      keyResultId={keyResult.id}
+                      onSubmit={handleCreateInitiative}
+                      onCancel={() => setShowInitiativeForm(null)}
+                    />
+                  )}
+
+                  <div className="space-y-2">
+                    {keyResult.initiatives?.map((initiative) => (
+                      <div key={initiative.id}>
+                        {editingInitiative === initiative.id ? (
+                          <EditInitiativeForm
+                            initiative={initiative}
+                            onSubmit={handleUpdateInitiative}
+                            onCancel={() => setEditingInitiative(null)}
+                          />
+                        ) : (
+                          <div className="flex items-center justify-between p-3 bg-gray-50 rounded border">
+                            <div className="flex-1">
+                              <h5 className="font-medium text-gray-900">{initiative.title}</h5>
+                              {initiative.description && (
+                                <p className="text-sm text-gray-600">{initiative.description}</p>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-3">
+                              {initiative.owner && (
+                                <span className="text-sm text-gray-500">{initiative.owner}</span>
+                              )}
+                              <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                initiative.status === 'completed' ? 'bg-green-100 text-green-700' :
+                                initiative.status === 'in_progress' ? 'bg-yellow-100 text-yellow-700' :
+                                'bg-gray-100 text-gray-700'
+                              }`}>
+                                {initiative.status.replace('_', ' ')}
+                              </span>
+                              <button
+                                onClick={() => startEditingInitiative(initiative)}
+                                className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs hover:bg-blue-200 transition-colors"
+                              >
+                                Edit
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {(!keyResult.initiatives || keyResult.initiatives.length === 0) && (
+                    <p className="text-gray-500 text-sm">No initiatives yet. Add one to break down this key result into actionable steps.</p>
+                  )}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-8 bg-white rounded-lg border border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Key Results Yet</h3>
+              <p className="text-gray-600 mb-4">Add key results to make this objective measurable.</p>
+              <button
+                onClick={() => setShowKeyResultForm(true)}
+                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+              >
+                Add Your First Key Result
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     );
   };
