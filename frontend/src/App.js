@@ -937,9 +937,11 @@ const App = () => {
     const [progressValue, setProgressValue] = useState('');
 
     const handleCreateKeyResult = async (objectiveId, keyResultData) => {
+      console.log('Creating key result:', keyResultData);
       const result = await createKeyResult(objectiveId, keyResultData);
       if (result) {
         setShowKeyResultForm(false);
+        console.log('Key result created successfully');
       }
     };
 
