@@ -29,9 +29,15 @@ const App = () => {
   const fetchObjectiveDetails = async (objectiveId) => {
     try {
       setLoading(true);
+      console.log('Fetching objective details for ID:', objectiveId);
       const response = await fetch(`${BACKEND_URL}/api/objectives/${objectiveId}`);
       const data = await response.json();
+      console.log('API Response for objective details:', data);
+      console.log('Key results in response:', data.key_results);
+      console.log('Number of key results:', data.key_results?.length || 0);
+      
       setSelectedObjective(data);
+      console.log('Selected objective set to:', data);
     } catch (error) {
       console.error('Error fetching objective details:', error);
     } finally {
