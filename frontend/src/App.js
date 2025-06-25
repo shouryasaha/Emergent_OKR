@@ -10,6 +10,130 @@ const App = () => {
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
+  // Mock data for demonstration
+  const mockTeams = [
+    { id: 1, name: 'Engineering', members: 24, lead: 'Sarah Chen', objectives: 8, avgProgress: 78 },
+    { id: 2, name: 'Product', members: 12, lead: 'Marcus Kim', objectives: 6, avgProgress: 85 },
+    { id: 3, name: 'Sales', members: 18, lead: 'Jennifer Lopez', objectives: 10, avgProgress: 92 },
+    { id: 4, name: 'Marketing', members: 15, lead: 'David Wilson', objectives: 7, avgProgress: 68 },
+    { id: 5, name: 'Customer Success', members: 10, lead: 'Lisa Wang', objectives: 5, avgProgress: 88 },
+    { id: 6, name: 'Operations', members: 8, lead: 'Michael Brown', objectives: 4, avgProgress: 75 }
+  ];
+
+  const mockPeople = [
+    { id: 1, name: 'Sarah Chen', role: 'VP Engineering', team: 'Engineering', objectives: 3, avgProgress: 82, email: 'sarah.chen@company.com' },
+    { id: 2, name: 'Marcus Kim', role: 'Head of Product', team: 'Product', objectives: 4, avgProgress: 89, email: 'marcus.kim@company.com' },
+    { id: 3, name: 'Jennifer Lopez', role: 'Sales Director', team: 'Sales', objectives: 5, avgProgress: 94, email: 'jennifer.lopez@company.com' },
+    { id: 4, name: 'David Wilson', role: 'Marketing Manager', team: 'Marketing', objectives: 3, avgProgress: 71, email: 'david.wilson@company.com' },
+    { id: 5, name: 'Lisa Wang', role: 'Customer Success Lead', team: 'Customer Success', objectives: 2, avgProgress: 87, email: 'lisa.wang@company.com' },
+    { id: 6, name: 'Michael Brown', role: 'Operations Manager', team: 'Operations', objectives: 2, avgProgress: 79, email: 'michael.brown@company.com' },
+    { id: 7, name: 'Alex Thompson', role: 'Senior Engineer', team: 'Engineering', objectives: 2, avgProgress: 75, email: 'alex.thompson@company.com' },
+    { id: 8, name: 'Emma Davis', role: 'Product Manager', team: 'Product', objectives: 3, avgProgress: 83, email: 'emma.davis@company.com' },
+    { id: 9, name: 'James Miller', role: 'Account Executive', team: 'Sales', objectives: 4, avgProgress: 91, email: 'james.miller@company.com' },
+    { id: 10, name: 'Sophie Garcia', role: 'Content Manager', team: 'Marketing', objectives: 2, avgProgress: 65, email: 'sophie.garcia@company.com' }
+  ];
+
+  const mockCompanyOKRs = [
+    {
+      id: 'comp-1',
+      title: 'Achieve Market Leadership Position',
+      description: 'Become the #1 solution in our market segment',
+      owner: 'Executive Team',
+      deadline: '2025-12-31',
+      progress: 72,
+      keyResults: [
+        { title: 'Reach $50M ARR', progress: 68, current: '34M', target: '50M', unit: '$' },
+        { title: 'Capture 25% market share', progress: 75, current: '18.7%', target: '25%', unit: '%' },
+        { title: 'Achieve NPS score of 70+', progress: 80, current: '66', target: '70', unit: '' }
+      ]
+    },
+    {
+      id: 'comp-2', 
+      title: 'Build World-Class Team',
+      description: 'Scale our team with top talent while maintaining culture',
+      owner: 'CEO & People Team',
+      deadline: '2025-12-31',
+      progress: 65,
+      keyResults: [
+        { title: 'Grow team to 200 people', progress: 63, current: '147', target: '200', unit: 'people' },
+        { title: 'Maintain 95%+ employee satisfaction', progress: 70, current: '92%', target: '95%', unit: '%' },
+        { title: 'Achieve 90%+ retention rate', progress: 85, current: '88%', target: '90%', unit: '%' }
+      ]
+    },
+    {
+      id: 'comp-3',
+      title: 'Accelerate Innovation',
+      description: 'Lead the market with cutting-edge product innovations',
+      owner: 'CTO & Product Team',
+      deadline: '2025-12-31', 
+      progress: 78,
+      keyResults: [
+        { title: 'Launch 3 major product features', progress: 67, current: '2', target: '3', unit: 'features' },
+        { title: 'Reduce time-to-market by 40%', progress: 85, current: '32%', target: '40%', unit: '%' },
+        { title: 'File 5 patent applications', progress: 80, current: '4', target: '5', unit: 'patents' }
+      ]
+    }
+  ];
+
+  const mockTeamOKRs = [
+    {
+      id: 'team-eng-1',
+      title: 'Deliver High-Performance Platform',
+      description: 'Build scalable, reliable infrastructure for 10x growth',
+      team: 'Engineering',
+      owner: 'Sarah Chen',
+      deadline: '2025-09-30',
+      progress: 82,
+      keyResults: [
+        { title: 'Achieve 99.9% uptime', progress: 85, current: '99.7%', target: '99.9%', unit: '%' },
+        { title: 'Reduce API response time to <100ms', progress: 78, current: '142ms', target: '100ms', unit: 'ms' },
+        { title: 'Complete security audit with 0 critical issues', progress: 90, current: '1', target: '0', unit: 'issues' }
+      ]
+    },
+    {
+      id: 'team-sales-1',
+      title: 'Accelerate Revenue Growth',
+      description: 'Drive aggressive sales growth through new channels',
+      team: 'Sales',
+      owner: 'Jennifer Lopez',
+      deadline: '2025-09-30',
+      progress: 94,
+      keyResults: [
+        { title: 'Close $12M in new business', progress: 96, current: '11.5M', target: '12M', unit: '$' },
+        { title: 'Achieve 120% of quota attainment', progress: 92, current: '115%', target: '120%', unit: '%' },
+        { title: 'Onboard 50 new enterprise clients', progress: 94, current: '47', target: '50', unit: 'clients' }
+      ]
+    },
+    {
+      id: 'team-product-1',
+      title: 'Enhance User Experience',
+      description: 'Create delightful product experiences that drive adoption',
+      team: 'Product',
+      owner: 'Marcus Kim',
+      deadline: '2025-09-30',
+      progress: 76,
+      keyResults: [
+        { title: 'Improve user onboarding completion to 85%', progress: 73, current: '78%', target: '85%', unit: '%' },
+        { title: 'Increase feature adoption by 50%', progress: 80, current: '42%', target: '50%', unit: '%' },
+        { title: 'Achieve 4.8+ app store rating', progress: 75, current: '4.6', target: '4.8', unit: '/5' }
+      ]
+    },
+    {
+      id: 'team-marketing-1', 
+      title: 'Drive Brand Awareness',
+      description: 'Establish strong market presence and thought leadership',
+      team: 'Marketing',
+      owner: 'David Wilson', 
+      deadline: '2025-09-30',
+      progress: 68,
+      keyResults: [
+        { title: 'Generate 10k qualified leads', progress: 65, current: '6.5k', target: '10k', unit: 'leads' },
+        { title: 'Achieve 50% brand awareness in target market', progress: 70, current: '35%', target: '50%', unit: '%' },
+        { title: 'Grow social media following to 100k', progress: 72, current: '72k', target: '100k', unit: 'followers' }
+      ]
+    }
+  ];
+
   // Fetch dashboard data
   const fetchDashboard = async () => {
     try {
@@ -204,9 +328,24 @@ const App = () => {
             >
               My OKRs
             </button>
-            <button className="text-sm font-medium text-gray-500 hover:text-gray-900">Team OKRs</button>
-            <button className="text-sm font-medium text-gray-500 hover:text-gray-900">Company OKRs</button>
-            <button className="text-sm font-medium text-gray-500 hover:text-gray-900">Reports</button>
+            <button
+              onClick={() => setActiveView('team-okrs')}
+              className={`text-sm font-medium ${activeView === 'team-okrs' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
+            >
+              Team OKRs
+            </button>
+            <button
+              onClick={() => setActiveView('company-okrs')}
+              className={`text-sm font-medium ${activeView === 'company-okrs' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
+            >
+              Company OKRs
+            </button>
+            <button
+              onClick={() => setActiveView('reports')}
+              className={`text-sm font-medium ${activeView === 'reports' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
+            >
+              Reports
+            </button>
           </nav>
         </div>
         <div className="flex items-center space-x-4">
@@ -227,16 +366,19 @@ const App = () => {
       <div className="p-6">
         <div className="flex items-center space-x-3 mb-8">
           <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center">
-            <span className="text-white font-bold text-sm">AC</span>
+            <span className="text-white font-bold text-sm">AT</span>
           </div>
-          <span className="text-lg font-semibold text-gray-900">OKR Tracker</span>
+          <div>
+            <div className="text-lg font-semibold text-gray-900">Alex Torres</div>
+            <div className="text-sm text-gray-500">Product Manager</div>
+          </div>
         </div>
         
         <nav className="space-y-2">
           <button
             onClick={() => setActiveView('dashboard')}
             className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium ${
-              activeView === 'dashboard' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50'
+              activeView === 'dashboard' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,28 +399,48 @@ const App = () => {
             <span>My OKRs</span>
           </button>
           
-          <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
+          <button
+            onClick={() => setActiveView('company-okrs')}
+            className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium ${
+              activeView === 'company-okrs' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h1a1 1 0 011 1v5m-4 0h4" />
             </svg>
             <span>Company OKRs</span>
           </button>
           
-          <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
+          <button
+            onClick={() => setActiveView('team-okrs')}
+            className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium ${
+              activeView === 'team-okrs' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
             <span>Teams</span>
           </button>
           
-          <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
+          <button
+            onClick={() => setActiveView('people')}
+            className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium ${
+              activeView === 'people' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
             <span>People</span>
           </button>
           
-          <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
+          <button
+            onClick={() => setActiveView('reports')}
+            className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium ${
+              activeView === 'reports' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
@@ -288,7 +450,7 @@ const App = () => {
           <button
             onClick={() => setActiveView('settings')}
             className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium ${
-              activeView === 'settings' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50'
+              activeView === 'settings' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -312,7 +474,7 @@ const App = () => {
     </div>
   );
 
-  // Form Components
+  // Form Components (keeping existing functionality)
   const ObjectiveForm = ({ onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
       title: '',
@@ -667,7 +829,7 @@ const App = () => {
     );
   };
 
-  // Dashboard View
+  // Dashboard View with Enhanced Metrics
   const Dashboard = () => {
     if (loading && !dashboardData) {
       return (
@@ -677,141 +839,426 @@ const App = () => {
       );
     }
 
-    const timeRemaining = "2 months";
-    const avgObjectiveAchievement = dashboardData ? Math.round(dashboardData.avg_progress) : 0;
-    const avgKeyResultAchievement = 60; // Mock data
+    const timeRemaining = "3 months, 15 days";
+    const avgObjectiveAchievement = dashboardData ? Math.round(dashboardData.avg_progress) : 78;
+    const avgKeyResultAchievement = 74;
 
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <div className="text-sm text-gray-500">Q4 2024 Cycle</div>
         </div>
 
         {/* Overview Section */}
         <div>
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Overview</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h3 className="text-sm font-medium text-gray-600 mb-2">Time Remaining</h3>
-              <p className="text-3xl font-bold text-gray-900">{timeRemaining}</p>
+              <div className="flex items-center">
+                <div className="p-3 rounded-full bg-blue-100">
+                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-sm font-medium text-gray-600">Time Remaining</h3>
+                  <p className="text-2xl font-bold text-gray-900">{timeRemaining}</p>
+                </div>
+              </div>
             </div>
             <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h3 className="text-sm font-medium text-gray-600 mb-2">Average Objective Achievement</h3>
-              <p className="text-3xl font-bold text-gray-900">{avgObjectiveAchievement}%</p>
+              <div className="flex items-center">
+                <div className="p-3 rounded-full bg-green-100">
+                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-sm font-medium text-gray-600">Objective Progress</h3>
+                  <p className="text-2xl font-bold text-gray-900">{avgObjectiveAchievement}%</p>
+                </div>
+              </div>
             </div>
             <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h3 className="text-sm font-medium text-gray-600 mb-2">Average Key Result Achievement</h3>
-              <p className="text-3xl font-bold text-gray-900">{avgKeyResultAchievement}%</p>
+              <div className="flex items-center">
+                <div className="p-3 rounded-full bg-purple-100">
+                  <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-sm font-medium text-gray-600">Key Result Progress</h3>
+                  <p className="text-2xl font-bold text-gray-900">{avgKeyResultAchievement}%</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white p-6 rounded-lg border border-gray-200">
+              <div className="flex items-center">
+                <div className="p-3 rounded-full bg-orange-100">
+                  <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-sm font-medium text-gray-600">Total Teams</h3>
+                  <p className="text-2xl font-bold text-gray-900">{mockTeams.length}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Progress Section */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Progress</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Objective Achievement</h3>
-              <p className="text-3xl font-bold text-gray-900 mb-2">{avgObjectiveAchievement}%</p>
-              <p className="text-sm text-gray-600 mb-4">Current Cycle</p>
-              
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Sales</span>
-                  <div className="w-24 h-2 bg-gray-200 rounded-full">
-                    <div className="w-3/4 h-2 bg-blue-600 rounded-full"></div>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Team Performance</h2>
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="space-y-4">
+              {mockTeams.map((team) => (
+                <div key={team.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-4">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      team.avgProgress >= 90 ? 'bg-green-100 text-green-600' :
+                      team.avgProgress >= 70 ? 'bg-blue-100 text-blue-600' :
+                      'bg-orange-100 text-orange-600'
+                    }`}>
+                      <span className="font-semibold text-sm">{team.name.charAt(0)}</span>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">{team.name}</h3>
+                      <p className="text-sm text-gray-500">{team.members} members • {team.objectives} objectives</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <div className="text-right">
+                      <div className="text-sm font-medium text-gray-900">{team.avgProgress}%</div>
+                      <div className="w-32 h-2 bg-gray-200 rounded-full">
+                        <div 
+                          className={`h-2 rounded-full ${
+                            team.avgProgress >= 90 ? 'bg-green-500' :
+                            team.avgProgress >= 70 ? 'bg-blue-500' :
+                            'bg-orange-500'
+                          }`}
+                          style={{ width: `${team.avgProgress}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setActiveView('team-okrs')}
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    >
+                      View OKRs
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Marketing</span>
-                  <div className="w-24 h-2 bg-gray-200 rounded-full">
-                    <div className="w-1/2 h-2 bg-blue-600 rounded-full"></div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Product</span>
-                  <div className="w-24 h-2 bg-gray-200 rounded-full">
-                    <div className="w-5/6 h-2 bg-blue-600 rounded-full"></div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Engineering</span>
-                  <div className="w-24 h-2 bg-gray-200 rounded-full">
-                    <div className="w-2/3 h-2 bg-blue-600 rounded-full"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Key Result Achievement</h3>
-              <p className="text-3xl font-bold text-gray-900 mb-2">{avgKeyResultAchievement}%</p>
-              <p className="text-sm text-gray-600 mb-4">Current Cycle</p>
-              
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Sales</span>
-                  <div className="w-24 h-2 bg-gray-200 rounded-full">
-                    <div className="w-4/5 h-2 bg-green-600 rounded-full"></div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Marketing</span>
-                  <div className="w-24 h-2 bg-gray-200 rounded-full">
-                    <div className="w-3/5 h-2 bg-green-600 rounded-full"></div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Product</span>
-                  <div className="w-24 h-2 bg-gray-200 rounded-full">
-                    <div className="w-1/2 h-2 bg-green-600 rounded-full"></div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Engineering</span>
-                  <div className="w-24 h-2 bg-gray-200 rounded-full">
-                    <div className="w-3/4 h-2 bg-green-600 rounded-full"></div>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Recent Objectives */}
+        {/* Recent Activity */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Objectives</h2>
-          <div className="space-y-3">
-            {objectives.slice(0, 3).map((objective) => (
-              <div key={objective.id} className="bg-white p-4 rounded-lg border border-gray-200 flex items-center justify-between">
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-900">{objective.title}</h3>
-                  <p className="text-sm text-gray-600">{objective.owner}</p>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <div className="text-right">
-                    <div className="text-sm font-medium text-gray-900">{objective.progress.toFixed(0)}%</div>
-                    <ProgressBar progress={objective.progress} className="w-20" />
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
+          <div className="bg-white rounded-lg border border-gray-200">
+            <div className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                  <div>
+                    <p className="text-sm text-gray-900"><strong>Jennifer Lopez</strong> updated "Close $12M in new business" to 96%</p>
+                    <p className="text-xs text-gray-500">2 hours ago</p>
                   </div>
-                  <button
-                    onClick={() => {
-                      fetchObjectiveDetails(objective.id);
-                      setActiveView('details');
-                    }}
-                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                  >
-                    View
-                  </button>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                  <div>
+                    <p className="text-sm text-gray-900"><strong>Sarah Chen</strong> completed initiative "Deploy monitoring system"</p>
+                    <p className="text-xs text-gray-500">5 hours ago</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
+                  <div>
+                    <p className="text-sm text-gray-900"><strong>Marcus Kim</strong> created new objective "Enhance User Experience"</p>
+                    <p className="text-xs text-gray-500">1 day ago</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                  <div>
+                    <p className="text-sm text-gray-900"><strong>Alex Thompson</strong> added key result "Reduce API response time"</p>
+                    <p className="text-xs text-gray-500">2 days ago</p>
+                  </div>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
     );
   };
 
-  // Objectives View
+  // Company OKRs View
+  const CompanyOKRsView = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-gray-900">Company OKRs</h1>
+        <div className="text-sm text-gray-500">Q4 2024 Cycle</div>
+      </div>
+
+      <div className="space-y-6">
+        {mockCompanyOKRs.map((okr) => (
+          <div key={okr.id} className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="flex justify-between items-start mb-6">
+              <div className="flex-1">
+                <div className="flex items-center space-x-2 mb-2">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded">COMPANY</span>
+                </div>
+                <h2 className="text-xl font-bold text-gray-900 mb-2">{okr.title}</h2>
+                <p className="text-gray-600 mb-4">{okr.description}</p>
+                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                  <span>Owner: {okr.owner}</span>
+                  <span>Due: {new Date(okr.deadline).toLocaleDateString()}</span>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold text-blue-600 mb-2">{okr.progress}%</div>
+                <ProgressBar progress={okr.progress} className="w-32" />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h3 className="font-semibold text-gray-900 mb-3">Key Results</h3>
+              {okr.keyResults.map((kr, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-gray-900">{kr.title}</h4>
+                    <p className="text-sm text-gray-600">{kr.current}{kr.unit} / {kr.target}{kr.unit}</p>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-24 h-2 bg-gray-200 rounded-full">
+                      <div 
+                        className="h-2 bg-blue-600 rounded-full"
+                        style={{ width: `${kr.progress}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-sm font-medium text-gray-900 w-12 text-right">{kr.progress}%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // Team OKRs View  
+  const TeamOKRsView = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-gray-900">Team OKRs</h1>
+        <div className="text-sm text-gray-500">Q4 2024 Cycle</div>
+      </div>
+
+      <div className="space-y-6">
+        {mockTeamOKRs.map((okr) => (
+          <div key={okr.id} className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="flex justify-between items-start mb-6">
+              <div className="flex-1">
+                <div className="flex items-center space-x-2 mb-2">
+                  <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded">{okr.team.toUpperCase()}</span>
+                </div>
+                <h2 className="text-xl font-bold text-gray-900 mb-2">{okr.title}</h2>
+                <p className="text-gray-600 mb-4">{okr.description}</p>
+                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                  <span>Owner: {okr.owner}</span>
+                  <span>Due: {new Date(okr.deadline).toLocaleDateString()}</span>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold text-green-600 mb-2">{okr.progress}%</div>
+                <ProgressBar progress={okr.progress} className="w-32" />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h3 className="font-semibold text-gray-900 mb-3">Key Results</h3>
+              {okr.keyResults.map((kr, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-gray-900">{kr.title}</h4>
+                    <p className="text-sm text-gray-600">{kr.current}{kr.unit} / {kr.target}{kr.unit}</p>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-24 h-2 bg-gray-200 rounded-full">
+                      <div 
+                        className="h-2 bg-green-600 rounded-full"
+                        style={{ width: `${kr.progress}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-sm font-medium text-gray-900 w-12 text-right">{kr.progress}%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // People View
+  const PeopleView = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-gray-900">People</h1>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+          Add Person
+        </button>
+      </div>
+
+      <div className="bg-white rounded-lg border border-gray-200">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <div className="flex space-x-8">
+            <button className="pb-2 border-b-2 border-blue-600 text-blue-600 font-medium text-sm">All People</button>
+            <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm">By Team</button>
+            <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm">By Performance</button>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Person</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Team</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Objectives</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {mockPeople.map((person) => (
+                <tr key={person.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                        <span className="text-sm font-medium text-gray-700">
+                          {person.name.split(' ').map(n => n[0]).join('')}
+                        </span>
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">{person.name}</div>
+                        <div className="text-sm text-gray-500">{person.role}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded">{person.team}</span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {person.objectives}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="w-16 h-2 bg-gray-200 rounded-full mr-2">
+                        <div 
+                          className={`h-2 rounded-full ${
+                            person.avgProgress >= 90 ? 'bg-green-500' :
+                            person.avgProgress >= 70 ? 'bg-blue-500' :
+                            'bg-orange-500'
+                          }`}
+                          style={{ width: `${person.avgProgress}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">{person.avgProgress}%</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button className="text-blue-600 hover:text-blue-900 mr-3">View OKRs</button>
+                    <button className="text-gray-600 hover:text-gray-900">Edit</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Reports View
+  const ReportsView = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+          Export Report
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Objective Completion Rate</h3>
+          <div className="text-center">
+            <div className="text-4xl font-bold text-green-600 mb-2">78%</div>
+            <p className="text-sm text-gray-600">Objectives on track</p>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Team Performance</h3>
+          <div className="text-center">
+            <div className="text-4xl font-bold text-blue-600 mb-2">6/6</div>
+            <p className="text-sm text-gray-600">Teams meeting targets</p>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Individual Progress</h3>
+          <div className="text-center">
+            <div className="text-4xl font-bold text-purple-600 mb-2">81%</div>
+            <p className="text-sm text-gray-600">Average individual progress</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">OKR Progress by Quarter</h2>
+        <div className="space-y-4">
+          {['Q4 2024', 'Q3 2024', 'Q2 2024', 'Q1 2024'].map((quarter, index) => (
+            <div key={quarter} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div>
+                <h3 className="font-medium text-gray-900">{quarter}</h3>
+                <p className="text-sm text-gray-600">
+                  {index === 0 ? 'Current cycle (in progress)' : 'Completed cycle'}
+                </p>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="text-right">
+                  <div className="text-lg font-semibold text-gray-900">
+                    {index === 0 ? '78%' : index === 1 ? '92%' : index === 2 ? '85%' : '88%'}
+                  </div>
+                  <div className="w-32 h-2 bg-gray-200 rounded-full">
+                    <div 
+                      className="h-2 bg-blue-600 rounded-full"
+                      style={{ width: `${index === 0 ? 78 : index === 1 ? 92 : index === 2 ? 85 : 88}%` }}
+                    ></div>
+                  </div>
+                </div>
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                  View Details
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  // Objectives View (keeping existing functionality)
   const ObjectivesView = () => {
     const [showObjectiveForm, setShowObjectiveForm] = useState(false);
 
@@ -844,7 +1291,7 @@ const App = () => {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Objectives</h1>
+          <h1 className="text-2xl font-bold text-gray-900">My OKRs</h1>
           <button
             onClick={() => setShowObjectiveForm(true)}
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
@@ -928,7 +1375,7 @@ const App = () => {
     );
   };
 
-  // Objective Details View with Full Functionality
+  // Objective Details View (keeping existing functionality)
   const ObjectiveDetails = () => {
     const [showKeyResultForm, setShowKeyResultForm] = useState(false);
     const [showInitiativeForm, setShowInitiativeForm] = useState(null);
@@ -1186,7 +1633,7 @@ const App = () => {
     );
   };
 
-  // Settings View
+  // Settings View (keeping existing)
   const SettingsView = () => (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
@@ -1199,6 +1646,7 @@ const App = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
             <input
               type="text"
+              defaultValue="Alex Torres"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your name"
             />
@@ -1208,6 +1656,7 @@ const App = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
               type="email"
+              defaultValue="alex.torres@company.com"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your email"
             />
@@ -1217,6 +1666,7 @@ const App = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
             <input
               type="text"
+              defaultValue="Product Manager"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your job title"
             />
@@ -1293,7 +1743,8 @@ const App = () => {
 
   return (
     <div className="h-screen bg-gray-50 flex flex-col">
-      {activeView === 'dashboard' || activeView === 'objectives' || activeView === 'settings' ? (
+      {activeView === 'dashboard' || activeView === 'objectives' || activeView === 'settings' || 
+       activeView === 'company-okrs' || activeView === 'team-okrs' || activeView === 'people' || activeView === 'reports' ? (
         <>
           <Header />
           <div className="flex flex-1 overflow-hidden">
@@ -1301,6 +1752,10 @@ const App = () => {
             <main className="flex-1 overflow-auto p-6">
               {activeView === 'dashboard' && <Dashboard />}
               {activeView === 'objectives' && <ObjectivesView />}
+              {activeView === 'company-okrs' && <CompanyOKRsView />}
+              {activeView === 'team-okrs' && <TeamOKRsView />}
+              {activeView === 'people' && <PeopleView />}
+              {activeView === 'reports' && <ReportsView />}
               {activeView === 'settings' && <SettingsView />}
             </main>
           </div>
