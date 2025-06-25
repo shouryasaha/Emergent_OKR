@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 const App = () => {
+  console.log('App component rendering...');
+  
   const [objectives, setObjectives] = useState([]);
   const [selectedObjective, setSelectedObjective] = useState(null);
   const [dashboardData, setDashboardData] = useState(null);
@@ -9,6 +11,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+  console.log('BACKEND_URL:', BACKEND_URL);
 
   // Fetch dashboard data
   const fetchDashboard = async () => {
