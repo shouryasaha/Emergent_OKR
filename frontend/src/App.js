@@ -30,11 +30,22 @@ const App = () => {
     try {
       setLoading(true);
       console.log('Fetching objective details for ID:', objectiveId);
-      const response = await fetch(`${BACKEND_URL}/api/objectives/${objectiveId}`);
+      console.log('Backend URL:', BACKEND_URL);
+      const url = `${BACKEND_URL}/api/objectives/${objectiveId}`;
+      console.log('Full URL:', url);
+      
+      const response = await fetch(url);
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+      
       const data = await response.json();
       console.log('API Response for objective details:', data);
       console.log('Key results in response:', data.key_results);
       console.log('Number of key results:', data.key_results?.length || 0);
+      
+      if (data.key_results && data.key_results.length > 0) {
+        console.log('First key result:', data.key_results[0]);
+      }
       
       setSelectedObjective(data);
       console.log('Selected objective set to:', data);
