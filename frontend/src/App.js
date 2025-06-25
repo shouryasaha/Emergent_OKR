@@ -841,6 +841,8 @@ const App = () => {
   const ObjectivesView = () => {
     const [showObjectiveForm, setShowObjectiveForm] = useState(false);
 
+    console.log('ObjectivesView rendering with objectives:', objectives.length);
+
     const handleCreateObjective = async (objectiveData) => {
       const result = await createObjective(objectiveData);
       if (result) {
