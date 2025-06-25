@@ -898,46 +898,51 @@ const App = () => {
           <div key={quarter} className="space-y-4">
             <h2 className="text-xl font-bold text-gray-900">{quarter}</h2>
             <div className="space-y-4">
-              {quarterObjectives.map((objective, index) => (
-                <div key={objective.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <span className="text-sm text-gray-500">Objective</span>
+              {quarterObjectives.map((objective, index) => {
+                console.log('Rendering objective:', objective.title, 'with ID:', objective.id);
+                return (
+                  <div key={objective.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <span className="text-sm text-gray-500">Objective</span>
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{objective.title}</h3>
+                        <p className="text-gray-600 mb-4">{objective.description}</p>
+                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                          {objective.owner && <span>Owner: {objective.owner}</span>}
+                          {objective.deadline && <span>Due: {new Date(objective.deadline).toLocaleDateString()}</span>}
+                          <span>{objective.key_results_count || 0} Key Results</span>
+                        </div>
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">{objective.title}</h3>
-                      <p className="text-gray-600 mb-4">{objective.description}</p>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
-                        {objective.owner && <span>Owner: {objective.owner}</span>}
-                        {objective.deadline && <span>Due: {new Date(objective.deadline).toLocaleDateString()}</span>}
-                        <span>{objective.key_results_count || 0} Key Results</span>
+                      <div className={`w-24 h-24 ${iconColors[index % iconColors.length]} rounded-lg flex items-center justify-center ml-6`}>
+                        <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                       </div>
                     </div>
-                    <div className={`w-24 h-24 ${iconColors[index % iconColors.length]} rounded-lg flex items-center justify-center ml-6`}>
-                      <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
+                    <div className="mt-4 flex items-center justify-between">
+                      <div className="flex-1 mr-4">
+                        <ProgressBar progress={objective.progress} />
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">{objective.progress.toFixed(0)}%</span>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          console.log('BUTTON CLICKED! Objective:', objective.title);
+                          alert('Button clicked! Objective: ' + objective.title);
+                          fetchObjectiveDetails(objective.id);
+                          setActiveView('details');
+                        }}
+                        className="ml-4 text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        style={{ cursor: 'pointer', zIndex: 10 }}
+                      >
+                        View Details
+                      </button>
                     </div>
                   </div>
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="flex-1 mr-4">
-                      <ProgressBar progress={objective.progress} />
-                    </div>
-                    <span className="text-sm font-medium text-gray-900">{objective.progress.toFixed(0)}%</span>
-                    <button
-                      onClick={() => {
-                        alert('Button clicked! Objective: ' + objective.title);
-                        console.log('View Details clicked for objective:', objective.id, objective.title);
-                        fetchObjectiveDetails(objective.id);
-                        setActiveView('details');
-                      }}
-                      className="ml-4 text-blue-600 hover:text-blue-800 text-sm font-medium"
-                    >
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ))}
