@@ -1048,6 +1048,14 @@ const App = () => {
             <p>Key Results Array: {selectedObjective.key_results ? 'exists' : 'null/undefined'}</p>
             <p>Key Results Length: {selectedObjective.key_results?.length || 0}</p>
             <p>Progress: {selectedObjective.progress}%</p>
+            {selectedObjective.key_results && selectedObjective.key_results.length > 0 && (
+              <div className="mt-2">
+                <p>First Key Result:</p>
+                <p className="ml-4">- ID: {selectedObjective.key_results[0].id}</p>
+                <p className="ml-4">- Title: {selectedObjective.key_results[0].title}</p>
+                <p className="ml-4">- Progress: {selectedObjective.key_results[0].progress}%</p>
+              </div>
+            )}
           </div>
         </div>
 
