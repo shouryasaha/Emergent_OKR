@@ -937,11 +937,9 @@ const App = () => {
     const [progressValue, setProgressValue] = useState('');
 
     const handleCreateKeyResult = async (objectiveId, keyResultData) => {
-      console.log('Creating key result:', keyResultData);
       const result = await createKeyResult(objectiveId, keyResultData);
       if (result) {
         setShowKeyResultForm(false);
-        console.log('Key result created successfully');
       }
     };
 
@@ -982,10 +980,6 @@ const App = () => {
       );
     }
 
-    console.log('Selected Objective:', selectedObjective);
-    console.log('Key Results:', selectedObjective.key_results);
-    console.log('Number of Key Results:', selectedObjective.key_results?.length || 0);
-
     return (
       <div className="space-y-6">
         <div className="flex items-center space-x-4 mb-6">
@@ -1023,40 +1017,11 @@ const App = () => {
           </div>
           
           <button
-            onClick={() => {
-              console.log('Add Key Result button clicked');
-              setShowKeyResultForm(true);
-            }}
+            onClick={() => setShowKeyResultForm(true)}
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
           >
             + Add Key Result
           </button>
-          
-          {showKeyResultForm && (
-            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
-              <p className="text-yellow-800">Key Result form should appear here</p>
-            </div>
-          )}
-        </div>
-
-        {/* Debug Information */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h3 className="font-semibold text-yellow-800 mb-2">Debug Information:</h3>
-          <div className="text-sm text-yellow-700">
-            <p>Show Key Result Form: {showKeyResultForm ? 'true' : 'false'}</p>
-            <p>Objective ID: {selectedObjective.id}</p>
-            <p>Key Results Array: {selectedObjective.key_results ? 'exists' : 'null/undefined'}</p>
-            <p>Key Results Length: {selectedObjective.key_results?.length || 0}</p>
-            <p>Progress: {selectedObjective.progress}%</p>
-            {selectedObjective.key_results && selectedObjective.key_results.length > 0 && (
-              <div className="mt-2">
-                <p>First Key Result:</p>
-                <p className="ml-4">- ID: {selectedObjective.key_results[0].id}</p>
-                <p className="ml-4">- Title: {selectedObjective.key_results[0].title}</p>
-                <p className="ml-4">- Progress: {selectedObjective.key_results[0].progress}%</p>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Key Result Form */}
@@ -1064,10 +1029,7 @@ const App = () => {
           <KeyResultForm
             objectiveId={selectedObjective.id}
             onSubmit={handleCreateKeyResult}
-            onCancel={() => {
-              console.log('Canceling key result form');
-              setShowKeyResultForm(false);
-            }}
+            onCancel={() => setShowKeyResultForm(false)}
           />
         )}
 
