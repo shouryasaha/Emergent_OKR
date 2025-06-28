@@ -7,6 +7,7 @@ const App = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [activeView, setActiveView] = useState('dashboard');
   const [loading, setLoading] = useState(false);
+  const [showAIGenerator, setShowAIGenerator] = useState(false);
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
