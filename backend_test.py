@@ -459,27 +459,31 @@ def test_initiative_validation(tester):
     # Test 2: Try to update non-existent initiative
     print("\n🔍 Testing update of non-existent initiative")
     fake_id = "non-existent-id"
-    success, _ = tester.run_test(
-        "Update Non-existent Initiative",
-        "PUT",
-        f"api/initiatives/{fake_id}",
-        404,
-        data={
-            "id": fake_id,
-            "title": "This should fail",
-            "description": "",
-            "owner": "",
-            "status": "not_started"
-        }
-    )
     
-    if success:
-        print("❌ Expected 404 error for non-existent initiative")
+    # We expect a 404 error for a non-existent initiative
+    url = f"{tester.base_url}/api/initiatives/{fake_id}"
+    headers = {'Content-Type': 'application/json'}
+    data = {
+        "id": fake_id,
+        "title": "This should fail",
+        "description": "",
+        "owner": "",
+        "status": "not_started"
+    }
+    
+    try:
+        response = requests.put(url, json=data, headers=headers)
+        print(f"Status code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("✅ Correctly received 404 error for non-existent initiative")
+            return True
+        else:
+            print(f"❌ Expected 404 error, got {response.status_code}")
+            return False
+    except Exception as e:
+        print(f"❌ Error during validation test: {str(e)}")
         return False
-    else:
-        print("✅ Correctly received error for non-existent initiative")
-    
-    return True
 
 def test_specific_initiative_editing(tester):
     """Test editing a specific initiative by creating a new one first"""
