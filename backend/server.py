@@ -28,7 +28,7 @@ app.add_middleware(
 
 # MongoDB setup
 MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/')
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', 'AIzaSyDOQI8NLpiILX_sgK405G2pDZMJ2YBItOE')
 client = MongoClient(MONGO_URL)
 db = client.okr_tracker
 
