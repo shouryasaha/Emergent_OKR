@@ -301,6 +301,67 @@ const App = () => {
     }
   };
 
+  // Generate OKRs with AI
+  const generateOKRsWithAI = async (contextData) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${BACKEND_URL}/api/generate-okrs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contextData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error generating OKRs:', errorData);
+        alert('Failed to generate OKRs. Please try again.');
+        return null;
+      }
+      
+      const result = await response.json();
+      return result.generated_okrs;
+    } catch (error) {
+      console.error('Error generating OKRs:', error);
+      alert('Network error while generating OKRs.');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Generate and create OKRs with AI
+  const generateAndCreateOKRs = async (contextData) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${BACKEND_URL}/api/generate-and-create-okrs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contextData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error generating and creating OKRs:', errorData);
+        alert('Failed to generate and create OKRs. Please try again.');
+        return null;
+      }
+      
+      const result = await response.json();
+      await fetchDashboard(); // Refresh data
+      return result.created_objectives;
+    } catch (error) {
+      console.error('Error generating and creating OKRs:', error);
+      alert('Network error while generating OKRs.');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchDashboard();
   }, []);
