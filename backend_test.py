@@ -482,12 +482,53 @@ def test_initiative_validation(tester):
     return True
 
 def test_specific_initiative_editing(tester):
-    """Test editing the specific initiative with ID 760fdbc6-3cb4-44bd-bf5f-89bbafc76423"""
+    """Test editing a specific initiative by creating a new one first"""
     print("\n" + "="*50)
     print("🔍 TESTING SPECIFIC INITIATIVE EDITING")
     print("="*50)
     
-    initiative_id = "760fdbc6-3cb4-44bd-bf5f-89bbafc76423"
+    # First create an objective, key result, and initiative to test with
+    print("\n🔍 Creating test data for specific initiative editing")
+    
+    # Create a new objective
+    success, objective = tester.test_create_objective(
+        title="Specific Initiative Test",
+        description="Testing specific initiative editing",
+        owner="Test User"
+    )
+    
+    if not success or not objective.get('id'):
+        print("❌ Failed to create objective for specific initiative test")
+        return False
+    
+    objective_id = objective.get('id')
+    
+    # Create a key result
+    success, key_result = tester.test_create_key_result(
+        objective_id=objective_id,
+        title="Specific KR Test",
+        owner="Test User"
+    )
+    
+    if not success or not key_result.get('id'):
+        print("❌ Failed to create key result for specific initiative test")
+        return False
+    
+    key_result_id = key_result.get('id')
+    
+    # Create an initiative
+    success, initiative = tester.test_create_initiative(
+        key_result_id=key_result_id,
+        title="Specific Initiative Test",
+        owner="Test User"
+    )
+    
+    if not success or not initiative.get('id'):
+        print("❌ Failed to create initiative for specific test")
+        return False
+    
+    initiative_id = initiative.get('id')
+    print(f"✅ Created test initiative with ID: {initiative_id}")
     
     # Test 1: Update all fields of the initiative
     print("\n🔍 Testing updating all fields of the specific initiative")
