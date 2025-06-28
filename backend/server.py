@@ -8,6 +8,8 @@ import os
 from pymongo import MongoClient
 from bson import ObjectId
 import logging
+import asyncio
+from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
