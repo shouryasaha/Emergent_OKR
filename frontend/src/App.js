@@ -1627,6 +1627,16 @@ const App = () => {
           <button className="pb-2 text-gray-500 hover:text-gray-700">Team objectives</button>
         </div>
 
+        {showAIGenerator && (
+          <AIObjectiveGenerator
+            onGenerate={() => {
+              setShowAIGenerator(false);
+              fetchDashboard();
+            }}
+            onCancel={() => setShowAIGenerator(false)}
+          />
+        )}
+
         {showObjectiveForm && (
           <ObjectiveForm
             onSubmit={handleCreateObjective}
