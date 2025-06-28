@@ -526,6 +526,254 @@ const App = () => {
     </div>
   );
 
+  // AI OKR Generator Component
+  const AIObjectiveGenerator = ({ onGenerate, onCancel }) => {
+    const [formData, setFormData] = useState({
+      context: '',
+      company_size: 'SMB',
+      industry: '',
+      time_period: 'quarterly'
+    });
+    const [generationMode, setGenerationMode] = useState('preview'); // 'preview' or 'create'
+    const [generatedOKRs, setGeneratedOKRs] = useState([]);
+    const [isGenerating, setIsGenerating] = useState(false);
+
+    const handleGenerate = async (mode = 'preview') => {
+      if (!formData.context.trim()) {
+        alert('Please provide some context about your business goals.');
+        return;
+      }
+
+      setIsGenerating(true);
+      
+      let result;
+      if (mode === 'create') {
+        result = await generateAndCreateOKRs(formData);
+        if (result) {
+          alert(`Successfully created ${result.length} objectives with AI-generated content!`);
+          onGenerate();
+        }
+      } else {
+        result = await generateOKRsWithAI(formData);
+        if (result) {
+          setGeneratedOKRs(result);
+        }
+      }
+      setIsGenerating(false);
+    };
+
+    const handleCreateSelected = async () => {
+      // Create objectives manually from generated ones
+      const promises = generatedOKRs.map(async (okr) => {
+        const objectiveData = {
+          title: okr.title,
+          description: okr.description,
+          owner: okr.owner,
+          deadline: ''
+        };
+        const createdObjective = await createObjective(objectiveData);
+        
+        if (createdObjective) {
+          // Create key results for this objective
+          for (const kr of okr.key_results) {
+            await createKeyResult(createdObjective.id, {
+              title: kr.title,
+              description: kr.description || '',
+              type: kr.type || 'metric',
+              start_value: kr.start_value || 0,
+              target_value: kr.target_value || 100,
+              current_value: kr.current_value || 0,
+              unit: kr.unit || '',
+              owner: okr.owner
+            });
+          }
+        }
+        return createdObjective;
+      });
+
+      await Promise.all(promises);
+      alert(`Successfully created ${generatedOKRs.length} objectives!`);
+      onGenerate();
+    };
+
+    return (
+      <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-6">
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">AI-Powered OKR Generator</h3>
+        </div>
+        
+        <div className="bg-blue-50 p-4 rounded-lg">
+          <p className="text-sm text-blue-700">
+            <strong>How it works:</strong> Describe your business goals, challenges, or aspirations in plain language. 
+            Our AI will generate structured OKRs (Objectives and Key Results) tailored to your context.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Business Context & Goals <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={formData.context}
+              onChange={(e) => setFormData({...formData, context: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows="4"
+              placeholder="Example: We're a SaaS startup looking to increase our customer base, improve product quality, and scale our team. We want to reach 100k users and reduce churn rate while building a strong engineering culture..."
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Be specific about your goals, challenges, and desired outcomes for best results.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Company Size</label>
+              <select
+                value={formData.company_size}
+                onChange={(e) => setFormData({...formData, company_size: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="Startup">Startup (1-10 people)</option>
+                <option value="SMB">Small Business (11-50 people)</option>
+                <option value="Mid-size">Mid-size (51-200 people)</option>
+                <option value="Enterprise">Enterprise (200+ people)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Industry (Optional)</label>
+              <input
+                type="text"
+                value={formData.industry}
+                onChange={(e) => setFormData({...formData, industry: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="e.g., SaaS, E-commerce, Healthcare"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Time Period</label>
+              <select
+                value={formData.time_period}
+                onChange={(e) => setFormData({...formData, time_period: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="quarterly">Quarterly (3 months)</option>
+                <option value="half-yearly">Half-yearly (6 months)</option>
+                <option value="yearly">Yearly (12 months)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Generated OKRs Preview */}
+        {generatedOKRs.length > 0 && (
+          <div className="space-y-4">
+            <h4 className="text-md font-semibold text-gray-900">Generated OKRs Preview</h4>
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {generatedOKRs.map((okr, index) => (
+                <div key={index} className="bg-gray-50 p-4 rounded-lg border">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h5 className="font-semibold text-gray-900">{okr.title}</h5>
+                      <p className="text-sm text-gray-600 mt-1">{okr.description}</p>
+                      <p className="text-xs text-gray-500 mt-1">Owner: {okr.owner}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <h6 className="text-sm font-medium text-gray-700">Key Results:</h6>
+                    {okr.key_results.map((kr, krIndex) => (
+                      <div key={krIndex} className="bg-white p-2 rounded border">
+                        <p className="text-sm font-medium text-gray-800">{kr.title}</p>
+                        <p className="text-xs text-gray-600">
+                          Target: {kr.start_value || 0}{kr.unit} → {kr.target_value}{kr.unit}
+                          {kr.description && ` (${kr.description})`}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex gap-3 pt-4 border-t">
+          {generatedOKRs.length === 0 ? (
+            <>
+              <button
+                onClick={() => handleGenerate('preview')}
+                disabled={isGenerating || !formData.context.trim()}
+                className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Generating...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    <span>Generate OKRs</span>
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => handleGenerate('create')}
+                disabled={isGenerating || !formData.context.trim()}
+                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Creating...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    <span>Generate & Create</span>
+                  </>
+                )}
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={handleCreateSelected}
+                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+              >
+                Create These OKRs
+              </button>
+              <button
+                onClick={() => setGeneratedOKRs([])}
+                className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors"
+              >
+                Generate New OKRs
+              </button>
+            </>
+          )}
+          <button
+            onClick={onCancel}
+            className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   // Progress Bar Component
   const ProgressBar = ({ progress, className = "" }) => (
     <div className={`w-full bg-gray-200 rounded-full h-2 ${className}`}>
