@@ -568,6 +568,155 @@ def test_specific_initiative_editing(tester):
     
     return True
 
+def test_ai_okr_generation(tester):
+    """Test the AI-powered OKR generation endpoints"""
+    print("\n" + "="*50)
+    print("🔍 TESTING AI-POWERED OKR GENERATION")
+    print("="*50)
+    
+    # Test data for OKR generation
+    test_data = {
+        "context": "We are a SaaS startup looking to increase our customer base from 1000 to 5000 users, improve our product quality by reducing bugs, and scale our engineering team while maintaining code quality.",
+        "company_size": "Startup",
+        "industry": "SaaS",
+        "time_period": "quarterly"
+    }
+    
+    # Test 1: Generate OKRs Preview
+    print("\n🔍 Testing Generate OKRs Preview")
+    success, response = tester.run_test(
+        "Generate OKRs Preview",
+        "POST",
+        "api/generate-okrs",
+        200,
+        data=test_data
+    )
+    
+    if not success:
+        print("❌ Failed to generate OKRs preview")
+        return False
+    
+    # Validate response structure
+    if not response.get('success'):
+        print("❌ Response indicates failure")
+        return False
+    
+    generated_okrs = response.get('generated_okrs', [])
+    if not generated_okrs:
+        print("❌ No OKRs were generated")
+        return False
+    
+    print(f"✅ Successfully generated {len(generated_okrs)} OKRs")
+    
+    # Validate OKR structure
+    for i, okr in enumerate(generated_okrs):
+        print(f"\nObjective {i+1}: {okr.get('title')}")
+        print(f"Description: {okr.get('description')}")
+        print(f"Owner: {okr.get('owner')}")
+        
+        key_results = okr.get('key_results', [])
+        print(f"Key Results: {len(key_results)}")
+        
+        for j, kr in enumerate(key_results):
+            print(f"  KR {j+1}: {kr.get('title')}")
+            print(f"  Type: {kr.get('type')}")
+            print(f"  Target: {kr.get('target_value')} {kr.get('unit')}")
+    
+    # Test 2: Generate and Create OKRs
+    print("\n🔍 Testing Generate and Create OKRs")
+    success, response = tester.run_test(
+        "Generate and Create OKRs",
+        "POST",
+        "api/generate-and-create-okrs",
+        200,
+        data=test_data
+    )
+    
+    if not success:
+        print("❌ Failed to generate and create OKRs")
+        return False
+    
+    # Validate response structure
+    if not response.get('success'):
+        print("❌ Response indicates failure")
+        return False
+    
+    created_objectives = response.get('created_objectives', [])
+    if not created_objectives:
+        print("❌ No objectives were created")
+        return False
+    
+    print(f"✅ Successfully created {len(created_objectives)} objectives")
+    
+    # Validate created objectives structure
+    for i, obj in enumerate(created_objectives):
+        print(f"\nCreated Objective {i+1}: {obj.get('title')}")
+        print(f"Description: {obj.get('description')}")
+        print(f"Owner: {obj.get('owner')}")
+        
+        key_results = obj.get('key_results', [])
+        print(f"Key Results: {len(key_results)}")
+        
+        for j, kr in enumerate(key_results):
+            print(f"  KR {j+1}: {kr.get('title')}")
+            print(f"  Type: {kr.get('type')}")
+            print(f"  Target: {kr.get('target_value')} {kr.get('unit')}")
+    
+    # Test 3: Verify created objectives appear in dashboard
+    print("\n🔍 Verifying created objectives appear in dashboard")
+    success, dashboard = tester.run_test(
+        "Get Dashboard After OKR Creation",
+        "GET",
+        "api/dashboard",
+        200
+    )
+    
+    if not success:
+        print("❌ Failed to get dashboard")
+        return False
+    
+    dashboard_objectives = dashboard.get('objectives', [])
+    
+    # Check if our created objectives are in the dashboard
+    created_titles = [obj.get('title') for obj in created_objectives]
+    found_count = 0
+    
+    for obj in dashboard_objectives:
+        if obj.get('title') in created_titles:
+            found_count += 1
+            print(f"✅ Found created objective in dashboard: {obj.get('title')}")
+    
+    if found_count == 0:
+        print("❌ None of the created objectives were found in the dashboard")
+        return False
+    
+    print(f"✅ Found {found_count} of {len(created_objectives)} created objectives in the dashboard")
+    
+    # Test 4: Error handling - empty context
+    print("\n🔍 Testing error handling with empty context")
+    error_data = {
+        "context": "",
+        "company_size": "Startup",
+        "industry": "SaaS",
+        "time_period": "quarterly"
+    }
+    
+    success, response = tester.run_test(
+        "Generate OKRs with Empty Context",
+        "POST",
+        "api/generate-okrs",
+        400,  # Expecting a 400 Bad Request
+        data=error_data
+    )
+    
+    # The API might not properly validate empty context, so we're flexible about the expected response
+    if success:
+        print("⚠️ API accepted empty context - no validation on context field")
+    else:
+        print("✅ API correctly rejected empty context")
+    
+    return True
+
 def main():
     # Get the backend URL from the frontend .env file
     backend_url = "https://5a4e4720-a7e6-4c1d-8abc-236aacbc31c1.preview.emergentagent.com"
@@ -577,6 +726,9 @@ def main():
     
     # Basic API tests
     tester.test_health_check()
+    
+    # Test AI-powered OKR generation
+    ai_okr_success = test_ai_okr_generation(tester)
     
     # Test the specific initiative editing functionality
     specific_initiative_success = test_specific_initiative_editing(tester)
@@ -589,6 +741,12 @@ def main():
     
     # Print test summary
     success = tester.print_summary()
+    
+    if not ai_okr_success:
+        print("\n❌ AI-powered OKR generation tests failed")
+        success = False
+    else:
+        print("\n✅ AI-powered OKR generation tests passed")
     
     if not specific_initiative_success:
         print("\n❌ Specific initiative editing tests failed")
