@@ -128,6 +128,18 @@ backend:
       - working: true
         agent: "main"
         comment: "Complete CRUD operations for Objectives, Key Results, and Initiatives with progress calculations"
+        
+  - task: "AI-powered OKR generation"
+    implemented: true
+    working: false
+    file: "server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "The AI-powered OKR generation endpoints (/api/generate-okrs and /api/generate-and-create-okrs) are implemented correctly, but they return a 500 error with 'Gemini API key not configured'. The API key is present in the .env file but might not be properly loaded or the Gemini API might be unavailable."
 
 frontend:
   - task: "React application with professional UI"
@@ -157,16 +169,19 @@ frontend:
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 0
+  test_sequence: 1
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Application is ready for enhancements"
-  stuck_tasks: []
+    - "AI-powered OKR generation"
+  stuck_tasks:
+    - "AI-powered OKR generation"
   test_all: false
   test_priority: "sequential"
 
 agent_communication:
   - agent: "main"
     message: "OKR tracking application is fully functional with professional UI, complete backend API, and comprehensive features. Ready for user input on next enhancements or modifications."
+  - agent: "testing"
+    message: "I've tested the new AI-powered OKR generation feature. The endpoints are implemented correctly, but they return a 500 error with 'Gemini API key not configured'. The API key is present in the .env file but might not be properly loaded or the Gemini API might be unavailable. The rest of the application's backend functionality is working correctly."
