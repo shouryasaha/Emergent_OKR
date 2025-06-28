@@ -75,6 +75,18 @@ class Objective(BaseModel):
 class UpdateProgress(BaseModel):
     current_value: float
 
+class GenerateOKRRequest(BaseModel):
+    context: str
+    company_size: Optional[str] = "SMB"
+    industry: Optional[str] = ""
+    time_period: Optional[str] = "quarterly"
+    
+class GeneratedOKR(BaseModel):
+    title: str
+    description: str
+    owner: str
+    key_results: List[Dict[str, Any]]
+
 # Helper functions
 def calculate_kr_progress(kr: Dict) -> float:
     """Calculate progress percentage for a key result"""
